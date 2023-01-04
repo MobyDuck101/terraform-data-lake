@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "code": "CUS001",
+      "description": "Custom check to ensure the DataClassification label is applied to GKE Node Pools",
+      "impact": "We need visibility of GKE Workloads Data Classification",
+      "resolution": "Add the DataClassification label",
+      "requiredTypes": [
+        "resource"
+      ],
+      "requiredLabels": [
+        "google_container_node_pool"
+      ],
+      "severity": "ERROR",
+      "matchSpec": {
+        "name": "labels",
+        "action": "contains",
+        "value": "DataClassification"
+      },
+      "errorMessage": "The required DataClassification tag was missing",
+      "relatedLinks": [
+        "http://internal.acmecorp.com/standards/gcp/tagging.html"
+      ]
+    }
+  ]   
+}

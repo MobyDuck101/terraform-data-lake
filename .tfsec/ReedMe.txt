@@ -1,0 +1,6 @@
+This is the default dir for Custom TFSec Checks.
+This allows it to work with VSCode TFSecExtension. 
+Works Fine when labels is immediately below google_container_node_pool module
+Documentation unclear as to how to check inside node config. Looking for Example Rule
+    https://aquasecurity.github.io/tfsec/v1.0.0-rc.2/checks/google/gke/use-service-account/
+This example looks hopeful : https://stackoverflow.com/questions/66695911/how-to-create-custom-checks-in-tfsec 

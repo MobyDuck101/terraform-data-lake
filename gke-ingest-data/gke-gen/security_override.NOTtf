@@ -1,0 +1,12 @@
+resource "google_container_cluster" "non-gpu-gke-cluster" {
+  # Enable Workload Identity
+  # @DOCTAG: WRKLD_IDNT
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
+  }
+
+ ## Binary Authorisation
+ ## Some T/F Stuff Deprecated
+ ## T-former does not seem to include reverse-engineering Binary authorisation.  
+}
+
