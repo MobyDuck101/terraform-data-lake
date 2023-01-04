@@ -1,6 +1,11 @@
-This is the default dir for Custom TFSec Checks.
-This allows it to work with VSCode TFSecExtension. 
+.tfsec is the default dir for Custom TFSec Checks.
+This also integrates with the TFSec VSCode Extension
 Works Fine when labels is immediately below google_container_node_pool module
-Documentation unclear as to how to check inside node config. Looking for Example Rule
-    https://aquasecurity.github.io/tfsec/v1.0.0-rc.2/checks/google/gke/use-service-account/
-This example looks hopeful : https://stackoverflow.com/questions/66695911/how-to-create-custom-checks-in-tfsec 
+CUS001 which acesses a child node, is based on the following example: https://stackoverflow.com/questions/66695911/how-to-create-custom-checks-in-tfsec 
+@TODO: Comments in Custom rules
+@TODO: Distinguish between Key and Value
+@TODO: Check Labels Actually Applied (!)
+@TODO: Value chick vs Range: LIMITED, PUBLIC, CONFIDENTIAL, HIGHLY _CONFIDENTIAL
+@TODO: DataInTransit Follow up Rule (s)
+@TODO: Data At Rest Follow up rules
+@TODO: Declare Application Types (Do they write to file?)
