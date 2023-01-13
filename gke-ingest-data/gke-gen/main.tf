@@ -27,6 +27,14 @@ resource "google_container_cluster" "non-gpu-gke-cluster" {
   subnetwork = var.subnet_name
 
   min_master_version = var.gke_min_master_version
+
+  node_config {
+
+    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    # This is created earlier and needs artifact registry access role granted. 
+    service_account = google_service_account.svacc-gke-ingest-0.email
+  }
+
 }
 
 resource "google_container_node_pool" "non-gpu-node-pool" {

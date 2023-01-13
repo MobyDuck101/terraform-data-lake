@@ -72,7 +72,7 @@ module "google_gke_ingest" {
   gcs_notif_topic_name        = var.gcs_notif_topic_name
   depends_on       = [module.google_core]
 }
-
+/*
 module "google_gke_train" {
   source = "./gke-train-models"
 
@@ -88,3 +88,4 @@ module "google_gke_train" {
   gke_min_master_version = var.gke_min_master_version
   depends_on           = [module.google_core]
 }
+*/

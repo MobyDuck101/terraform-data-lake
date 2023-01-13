@@ -1,0 +1,43 @@
+## GPU Pytorch Build - v long due to large container?
+
+## CI
+gcloud builds submit   --tag europe-west2-docker.pkg.dev/nlp-dev-6aae/nle-repo/dothemath-gpu-pytorch ./dothemath-gpu/pytorch-img/python
+
+## CD K8s
+gcloud container clusters get-credentials training-cluster-0 --project nlp-dev-6aae --zone europe-west2-a
+
+gcloud container clusters describe training-cluster-0 --zone=europe-west2-a
+kubectl get nodes
+
+## Nvidia Driver Install
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/cos/daemonset-preloaded.yaml
+
+
+## CD - Deploy Container built by CI to K8s (GKE) 
+## Takes c. 5 mins to Create Container. 
+kubectl apply -f ./dothemath-gpu/pytorch-img/python/deployment.yaml
+kubectl get deployments
+## > 5 mins. later
+# NAME                                    READY   STATUS    RESTARTS   AGE
+# dothemath-gpu-pytorch-f57f6584b-pcmg9   1/1     Running   0          6m5s
+
+## Verify Nvidia installed - use current pos name (... get pods ...)
+kubectl exec -it dothemath-gpu-pytorch-f57f6584b-pcmg9 -- nvidia-smi
+
+## CD - Service
+kubectl apply -f ./dothemath-gpu/pytorch-img/python/service.yaml
+kubectl get services
+# -->
+# NAME            TYPE           CLUSTER-IP   EXTERNAL-IP    PORT(S)        AGE
+# dothemath-gpu   LoadBalancer   10.92.2.59   35.189.84.52   80:32740/TCP   39s
+# kubernetes      ClusterIP      10.92.0.1    <none>         443/TCP        3h25m
+
+## Exercise
+curl 35.189.84.52
+# -->
+# steven_donagh@cloudshell:~ (nlp-dev-6aae)$ curl 35.189.84.52
+# Result: y = 0.014059447683393955 + 0.8658673167228699 x + -0.0024254911113530397 x^2 + -0.09462855011224747 x^3steven_donagh@cloudshell:~ (nlp-dev-6aae)$ curl 35.189.84.52
+# Result: y = -0.013440316542983055 + 0.8246153593063354 x + 0.002318677492439747 x^2 + -0.08876081556081772 x^3steven_donagh@cloudshell:~ (nlp-dev-6aae)$ curl 35.189.84.52
+# Result: y = 0.037944015115499496 + 0.8503997921943665 x + -0.006545972544699907 x^2 + -0.09242843091487885 x^3steven_donagh@cloudshell:~ (nlp-dev-6aae)$
+
+

@@ -1,0 +1,39 @@
+## The Script - Event Driven State Transition & Last remaining Code change for MTA (post On Prem Scalability) 
+
+## Visual Check - IAM permisisons, need 3 - Do in Diagram & update
+
+## CI/CD 
+
+# Kick off a Build
+# ----------------
+# Code --> Cloud Build: Compile, (Test), Contain --> App Reg. 
+# The source code has already been placed in a directory under my home dir whence these commands are being run.
+# Show the Editor & Code - NB Project name as prefix of GCS Bucket
+ 
+gcloud builds submit   --tag europe-west2-docker.pkg.dev/nlp-dev-6aae/nle-repo/transition-sub ./pull-from-sub/transition-sub/nodejs
+
+# Check out the Art Reg and vulnerabilities scanner
+
+# Deploy to K8s
+# -------------
+
+# get access
+gcloud container clusters get-credentials ingest-cluster-0     --project nlp-dev-6aae --zone europe-west2-a
+
+# deploy to K8s pod
+# Show the Editor & Code - NB Project name as prefix of GCS Bucket
+
+kubectl apply -f ./pull-from-sub/transition-sub/nodejs/deployment.yaml
+
+kubectl get deployments
+
+kubectl apply -f ./pull-from-sub/transition-sub/nodejs/service.yaml
+
+kubectl get services
+
+kubectl get nodes
+kubectl get pods
+kubectl logs transition-sub-f76f4db77-nxdr2
+kubectl describe pod 
+kubectl delete pod transition-sub-f76f4db77-dlqbc
+
