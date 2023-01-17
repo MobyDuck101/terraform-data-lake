@@ -2,12 +2,21 @@ resource "google_service_account" "svacc-gke-ingest-0" {
   account_id   = "svacc-gke-ingest-0"
   display_name = "svacc-gke-ingest-0"
 }
-
+## TFsec - google-iam-no-privileged-service-accounts - High - Least Privilege
+## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_iam
+## https://cloud.google.com/iam/docs/understanding-roles 
+## Replaces storage.objectAdmin
 resource "google_project_iam_member" "gke_sa_iam_1" {
   member     = "serviceAccount:svacc-gke-ingest-0@${var.project_id}.iam.gserviceaccount.com"
   project    = var.project_id
-  role       = "roles/storage.objectAdmin"
+  role       = "roles/storage.objectCreator"
   depends_on = [google_service_account.svacc-gke-ingest-0, ]
+}
+resource "google_project_iam_member" "gke_sa_iam_2" {
+  member     = "serviceAccount:svacc-gke-ingest-0@${var.project_id}.iam.gserviceaccount.com"
+  project    = var.project_id
+  role       = "roles/storage.objectViewer"
+  depends_on = [google_project_iam_member.gke_sa_iam_1, ]
 }
 
 
@@ -15,7 +24,7 @@ resource "google_container_cluster" "non-gpu-gke-cluster" {
   ## TFSec: metadata-endpoints-disabled - High - Mitigates: makes it more difficult for a potential attacker to retrieve instance metadata.
   ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#metadata
   ## https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#protect_node_metadata_default_for_112
-  ## @TODO This example does not pass terraform valudate
+  ## @TODO This example does not pass terraform validate
   #metadata {
   #   disable-legacy-endpoints = true
   #}  
@@ -97,9 +106,10 @@ resource "google_container_node_pool" "non-gpu-node-pool" {
     ## TFSec: node-metadata-security - High - Mitigates: makes it more difficult for a potential attacker to retrieve instance metadata.
     ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#node_metadata
     ## https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#create-concealed
-    #workload_metadata_config {
-    #    mode = "GCE_METADATA"
-    #}
+    ## @TODO: tfsec seems out of alignment with terrafrom
+    workload_metadata_config {
+        mode = "GCE_METADATA"
+    }
 
     preemptible  = true
     machine_type = var.machine_type
