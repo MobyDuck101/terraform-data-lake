@@ -14,8 +14,16 @@ resource "google_project_iam_binding" "artifact-registry-reader-binding" {
 }
 
 resource "google_container_cluster" "model_training" {
+  provider = google-beta
   name     = var.cluster_name_gpu
   location = var.gke_location
+
+  ## TFSec: google-gke-enforce-pod-security-policy - High - Mitigates: Pods could be operating with more permissions than required to be effective
+  ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#pod_security_policy_config 
+  ## Uses google-beta provider
+  pod_security_policy_config {
+      enabled = "true"
+  }   
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -29,6 +37,15 @@ resource "google_container_cluster" "model_training" {
   # node_locations = ["us-central1-a", "us-central1-c", "us-central1-f"]
   network    = var.network_name
   subnetwork = var.subnet_name_gpu
+
+  ## TFSec: google-gke-enable-master-networks - High - Mitigates: Unrestricted network access to the master
+  ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#master_authorized_networks_config 
+  master_authorized_networks_config {
+    cidr_blocks {
+      cidr_block = "10.10.128.0/24"
+      display_name = "internal"
+   }
+  }
 
   ## Added stuff below to make private 
 
@@ -64,6 +81,13 @@ resource "google_container_node_pool" "model_training_nodes" {
     preemptible  = false # cant be true for GPU
     machine_type = var.machine_type_gpu
 
+    ## TFSec: node-metadata-security - High - Mitigates: makes it more difficult for a potential attacker to retrieve instance metadata.
+    ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#node_metadata
+    ## https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#create-concealed
+    #workload_metadata_config {
+    #    mode = "GCE_METADATA"
+    #}
+
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     # This is created earlier and needs artofact registry access role granted. 
     service_account = google_service_account.svacc-gke-train-0.email
@@ -77,5 +101,4 @@ resource "google_container_node_pool" "model_training_nodes" {
       count = 1
     }
   }
-
 }
