@@ -21,6 +21,14 @@ resource "google_compute_subnetwork" "vpc_network_subnet" {
   stack_type = "IPV4_ONLY"
 
   depends_on = [google_compute_network.vpc_network]
+  ## TFSec: google-compute-enable-vpc-flow-logs- Low - Mitigates: Limited Observability wrt Audit events
+  ## https://aquasecurity.github.io/tfsec/v1.22.1/checks/google/compute/enable-vpc-flow-logs/
+  ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork#enable_flow_logs
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }  
 }
 
 resource "google_compute_subnetwork" "vpc_network_subnet_gpu" {
@@ -36,6 +44,14 @@ resource "google_compute_subnetwork" "vpc_network_subnet_gpu" {
   stack_type = "IPV4_ONLY"
 
   depends_on = [google_compute_network.vpc_network]
+  ## TFSec: google-compute-enable-vpc-flow-logs- Low - Mitigates: Limited Observability wrt Audit events
+  ## https://aquasecurity.github.io/tfsec/v1.22.1/checks/google/compute/enable-vpc-flow-logs/
+  ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork#enable_flow_logs  
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }  
 }
 
 #
