@@ -53,7 +53,7 @@ module "google_core" {
   gcs_bucket_name_transcribed = local.bucket_name_transcribed
 
 }
-
+/*
 module "google_gke_ingest" {
   source = "./gke-ingest-data"
 
@@ -72,7 +72,8 @@ module "google_gke_ingest" {
   gcs_notif_topic_name        = var.gcs_notif_topic_name
   depends_on       = [module.google_core]
 }
-/*
+*/
+
 module "google_gke_train" {
   source = "./gke-train-models"
 
@@ -88,4 +89,3 @@ module "google_gke_train" {
   gke_min_master_version = var.gke_min_master_version
   depends_on           = [module.google_core]
 }
-*/

@@ -21,9 +21,9 @@ resource "google_container_cluster" "model_training" {
   ## TFSec: google-gke-enforce-pod-security-policy - High - Mitigates: Pods could be operating with more permissions than required to be effective
   ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#pod_security_policy_config 
   ## Uses google-beta provider
-  pod_security_policy_config {
-      enabled = "true"
-  }   
+  #pod_security_policy_config {
+  #    enabled = "true"
+  #}   
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -37,9 +37,9 @@ resource "google_container_cluster" "model_training" {
   ## https://aquasecurity.github.io/tfsec/v1.22.1/checks/google/gke/enable-network-policy/
   ## https://kubernetes.io/docs/concepts/services-networking/network-policies/
   ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#nested_network_policy
-  network_policy {
-    enabled = true
-  }
+  #network_policy {
+  #  enabled = true
+  #}
 
   project = var.project_id
   # node_locations = ["us-central1-a", "us-central1-c", "us-central1-f"]
@@ -84,9 +84,9 @@ resource "google_container_cluster" "model_training" {
   ## TFSec: google-gke-use-cluster-labels - Low - Mitigates: asset management limitations
   ## https://aquasecurity.github.io/tfsec/v1.22.1/checks/google/gke/use-cluster-labels/
   ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#resource_labels
-  resource_labels = {
-     "env" = "staging"
-  }
+  #resource_labels = {
+  #   "env" = "staging"
+  #}
 }
 #tfsec:ignore:google-gke-metadata-endpoints-disabled
 resource "google_container_node_pool" "model_training_nodes" {
@@ -110,9 +110,9 @@ resource "google_container_node_pool" "model_training_nodes" {
     ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#node_metadata
     ## https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#create-concealed
     ## @TODO: tfsec seems out of alignment with terrafrom
-    workload_metadata_config {
-        mode = "GCE_METADATA"
-    }
+    #workload_metadata_config {
+    #    mode = "GCE_METADATA"
+    #}
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     # This is created earlier and needs artofact registry access role granted. 
@@ -133,8 +133,8 @@ resource "google_container_node_pool" "model_training_nodes" {
   ## TFSec: google-gke-enable-auto-upgrade - Low - Mitigates: lack of automatic upgrade (of cluster master version), so manual upgrade required.
   ## https://aquasecurity.github.io/tfsec/v1.22.1/checks/google/gke/enable-auto-upgrade/
   ## https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool#auto_upgrade
-  management {
-    auto_repair = true
-    auto_upgrade = true
-  }  
+  #management {
+  #  auto_repair = true
+  #  auto_upgrade = true
+  #}  
 }
